@@ -1,0 +1,5 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+:focus-visible { outline: 3px solid #E0A100; outline-offset: 2px; }
+@media print { .no-print, footer { display: none !important; } }
