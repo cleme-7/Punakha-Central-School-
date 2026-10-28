@@ -1,48 +1,6 @@
-'use server'
+import { signIn } from './actions'
 
-import { createServerClient, type CookieOptions } from '@supabase/ssr'
-import { cookies } from 'next/headers'
-import { redirect } from 'next/navigation'
-
-export default async function LoginPage({
-  searchParams,
-}: {
-  searchParams: { next?: string }
-}) {
-  const signIn = async (formData: FormData) => {
-    'use server'
-    const email = formData.get('email') as string
-    const password = formData.get('password') as string
-    const cookieStore = cookies()
-
-    const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      {
-        cookies: {
-          getAll() { return cookieStore.getAll() },
-          setAll(cookiesToSet: { name: string; value: string; options: CookieOptions }[]) {
-            try {
-              cookiesToSet.forEach(({ name, value, options }) =>
-                cookieStore.set(name, value, options)
-              )
-            } catch (error) {
-              // Ignore
-            }
-          },
-        },
-      }
-    )
-
-    const { error } = await supabase.auth.signInWithPassword({ email, password })
-
-    if (error) {
-      return redirect('/login?error=true')
-    }
-
-    redirect(searchParams.next || '/admin')
-  }
-
+export default function LoginPage() {
   return (
     <div className="flex flex-col items-center justify-center min-h-[60vh] p-4">
       <h1 className="text-3xl font-serif mb-8">Sign in</h1>
